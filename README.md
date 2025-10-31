@@ -68,7 +68,7 @@ git push -u origin main
 ```
 
 Your app will be live at:  
-`https://USERNAME.github.io/foodbank-ops/`
+`https://antonioayala488.github.io/AIArtifact/`
 
 ---
 
