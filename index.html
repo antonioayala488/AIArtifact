@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Food Bank Ops</title>
+  <meta name="description" content="Donation intake, inventory, pickup scheduling, and impact dashboard. Offline-capable PWA." />
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='80'>🥫</text></svg>">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="navbar" role="banner">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🥫</div>
+        <strong>Community Food Bank Ops</strong>
+      </div>
+      <nav aria-label="Primary">
+        <button class="tablink" data-tab="intake">Intake</button>
+        <button class="tablink" data-tab="inventory">Inventory</button>
+        <button class="tablink" data-tab="schedule">Schedule</button>
+        <button class="tablink" data-tab="dashboard">Dashboard</button>
+        <button class="tablink" data-tab="settings" title="Import/Export">Settings</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app" class="container" tabindex="-1">
+    <!-- Intake Tab -->
+    <section class="tab" id="intake" aria-labelledby="intake-tab">
+      <h1>Donation Intake</h1>
+      <form id="donationForm" class="card">
+        <div class="grid grid-3">
+          <div>
+            <label for="donor">Donor</label>
+            <input id="donor" name="donor" required placeholder="Name or organization">
+          </div>
+          <div>
+            <label for="item">Item</label>
+            <input id="item" name="item" required placeholder="e.g., Canned Beans">
+          </div>
+          <div>
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="">Choose…</option>
+              <option>Produce</option>
+              <option>Canned</option>
+              <option>Dry Goods</option>
+              <option>Dairy</option>
+              <option>Frozen</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <div>
+            <label for="qty">Quantity</label>
+            <input id="qty" name="qty" type="number" min="0" step="1" required>
+          </div>
+          <div>
+            <label for="unit">Unit</label>
+            <select id="unit" name="unit" required>
+              <option>units</option>
+              <option>lb</option>
+              <option>kg</option>
+            </select>
+          </div>
+          <div>
+            <label for="weightLb">Weight (lb)</label>
+            <input id="weightLb" name="weightLb" type="number" min="0" step="0.01" placeholder="auto if unit=lb">
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary" type="submit">Add Donation</button>
+          <span id="intakeStatus" class="muted" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <h2 style="margin:0;">Recent Donations</h2>
+          <button id="clearDonations" class="btn btn-danger">Clear All</button>
+        </div>
+        <table class="table" id="donationsTable" aria-label="Donations table">
+          <thead>
+            <tr><th>Date</th><th>Donor</th><th>Item</th><th>Category</th><th>Qty</th><th>Unit</th><th>Weight(lb)</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Inventory Tab -->
+    <section class="tab" id="inventory" hidden>
+      <h1>Inventory</h1>
+      <div class="card">
+        <table class="table" id="inventoryTable" aria-label="Inventory table">
+          <thead>
+            <tr><th>Item</th><th>Category</th><th>Qty</th><th>Unit</th><th>Weight(lb)</th><th>Adjust</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Schedule Tab -->
+    <section class="tab" id="schedule" hidden>
+      <h1>Pickup Scheduling</h1>
+      <form id="pickupForm" class="card">
+        <div class="grid grid-3">
+          <div>
+            <label for="clientName">Name</label>
+            <input id="clientName" required placeholder="Client name">
+          </div>
+          <div>
+            <label for="pickupDate">Date & Time</label>
+            <input id="pickupDate" type="datetime-local" required>
+          </div>
+          <div>
+            <label for="notes">Notes</label>
+            <input id="notes" placeholder="e.g., Dietary needs">
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary" type="submit">Schedule</button>
+          <span id="scheduleStatus" class="muted" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <h2 style="margin:0;">Upcoming</h2>
+          <button id="clearPickups" class="btn btn-danger">Clear All</button>
+        </div>
+        <table class="table" id="pickupsTable" aria-label="Pickups table">
+          <thead>
+            <tr><th>Date</th><th>Name</th><th>Notes</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Dashboard Tab -->
+    <section class="tab" id="dashboard" hidden>
+      <h1>Impact Dashboard</h1>
+      <div class="grid grid-3">
+        <div class="kpi card"><div class="kpi-value" id="kpiTotalDonations">0</div><div class="kpi-label">Total Donations</div></div>
+        <div class="kpi card"><div class="kpi-value" id="kpiTotalLb">0</div><div class="kpi-label">Total Weight (lb)</div></div>
+        <div class="kpi card"><div class="kpi-value" id="kpiUpcoming">0</div><div class="kpi-label">Upcoming Pickups</div></div>
+      </div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center;">
+          <h2 style="margin:0;">Inventory by Category</h2>
+          <button id="refreshDashboard" class="btn">Refresh</button>
+        </div>
+        <canvas id="categoryChart" width="960" height="360" role="img" aria-label="Bar chart of inventory by category"></canvas>
+      </div>
+    </section>
+
+    <!-- Settings Tab -->
+    <section class="tab" id="settings" hidden>
+      <h1>Settings & Data</h1>
+      <div class="card">
+        <h2>Data Portability</h2>
+        <div class="row">
+          <button id="exportDonations" class="btn">Export Donations CSV</button>
+          <button id="exportInventory" class="btn">Export Inventory CSV</button>
+          <label class="btn">
+            Import Donations CSV
+            <input id="importDonations" type="file" accept=".csv" class="sr-only">
+          </label>
+        </div>
+        <p class="muted">CSV format documented in README. Data is stored locally in your browser.</p>
+      </div>
+      <div class="card">
+        <h2>About</h2>
+        <p class="muted">
+          This app is an educational, operational tool for a non-profit food bank. It demonstrates offline-first design,
+          basic data flows, and accessible UI without external dependencies.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container row" style="justify-content:space-between;">
+      <div>© <span id="year"></span> Community Food Bank</div>
+      <div class="muted">PWA • Offline capable</div>
+    </div>
+  </footer>
+
+  <script src="app.js" type="module"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+  </script>
+</body>
+</html>
