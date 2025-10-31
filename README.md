@@ -13,7 +13,7 @@ It was built collaboratively with generative AI to model how low-cost digital to
 
 ---
 
-## 🎯 Business Value
+##  Business Value
 
 **Problem:** Many small food banks and non-profits track donations, inventory, and client pickups with spreadsheets or paper forms, leading to inefficiency and data loss.
 
@@ -27,7 +27,7 @@ Result: operational efficiency, transparency, and community impact — all with 
 
 ---
 
-## 🧠 Where AI Was Used
+##  Where AI Was Used
 
 AI was used to:
 - **Brainstorm the concept** (operational workflow + business logic).
@@ -39,7 +39,7 @@ The AI’s role was as a **co-developer and technical writer**, helping accelera
 
 ---
 
-## ⚙️ How to Use
+##  How to Use
 
 ### Local Demo
 ```bash
@@ -72,7 +72,7 @@ Your app will be live at:
 
 ---
 
-## 🧩 Tech Stack
+##  Tech Stack
 - **HTML / CSS / JavaScript (Vanilla)** — lightweight, dependency-free
 - **Canvas** — chart rendering
 - **localStorage** — persistent state
@@ -82,5 +82,5 @@ Your app will be live at:
 
 ---
 
-## 🧾 License
+##  License
 MIT License — free for educational and community use.
